@@ -2,7 +2,7 @@
 ===
 + 
     using Java 
-    Android stdio
+    Android studio
 
 介紹
 ---
