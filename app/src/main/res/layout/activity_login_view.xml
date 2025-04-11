@@ -15,6 +15,7 @@
         android:layout_height="54dp"
         android:layout_marginBottom="156dp"
         android:backgroundTint="#1C2224"
+        android:onClick="mBtnLogin"
         android:text="登入"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

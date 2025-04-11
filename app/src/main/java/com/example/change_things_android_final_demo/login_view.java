@@ -1,5 +1,6 @@
 package com.example.change_things_android_final_demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,13 +36,10 @@ public class login_view extends AppCompatActivity {
         mimageView = findViewById(R.id.imageView);
 
         mimageView.setImageDrawable(getResources().getDrawable(R.drawable.baseline_account_circle_24));
-        mbuttonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(login_view.this, "登入成功!!", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
+    }
+    public void mBtnLogin(View view) {
+        Toast.makeText(login_view.this, "登入成功!!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(login_view.this, UploadItemActivity.class);
+        startActivity(intent);
     }
 }
