@@ -1,6 +1,7 @@
 package com.example.change_things_android_final_demo;
 
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class login_view extends AppCompatActivity {
+
+    public Button nmbutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
