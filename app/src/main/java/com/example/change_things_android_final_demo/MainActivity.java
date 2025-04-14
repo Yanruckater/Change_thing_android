@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnLogIn(View view) {
-        Intent intent = new Intent(MainActivity.this, login_view.class);
+        Intent intent = new Intent(MainActivity.this, Google_map_api.class);
         startActivity(intent);
     }
 

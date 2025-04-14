@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Change_things_Android_final_demo</string>
+    <string name="title_activity_google_map_api">Google_map_api</string>
 </resources>
