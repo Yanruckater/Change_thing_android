@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "583172615316",
-    "project_id": "shareeasy-2c549",
-    "storage_bucket": "shareeasy-2c549.firebasestorage.app"
+    "project_number": "881064092848",
+    "project_id": "sharetools-ed396",
+    "storage_bucket": "sharetools-ed396.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:583172615316:android:fcbef0bdd75d8edb29d881",
+        "mobilesdk_app_id": "1:881064092848:android:1c74f027e7ef4b79270775",
         "android_client_info": {
           "package_name": "com.example.change_things_android_final_demo"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAlhTXIpEkpCHwruUdAt-Hifz_UKJo-RFA"
+          "current_key": "AIzaSyC8npRFR36lxqisdqTiFmqPXGCkJnZrNf4"
         }
       ],
       "services": {
