@@ -1,8 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
-    //add there
-    id 'com.google.gms.google-services'
-    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+    id 'com.android.application'
+    id 'com.google.gms.google-services'  // Firebase Gradle 插件
 }
 
 android {
@@ -35,6 +33,12 @@ android {
 }
 
 dependencies {
+    // Android
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.activity:activity-ktx:1.8.2'
+    implementation libs.firebase.firestore
 
     implementation libs.appcompat
     implementation libs.material
@@ -50,13 +54,14 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.12.0')
     implementation 'com.google.firebase:firebase-analytics'
 
+
+    // Google Play 服務
+    implementation 'com.google.android.gms:play-services-auth:21.3.0'
+    implementation 'com.google.android.gms:play-services-location:21.2.0'
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+
     // Also add the dependency for the Google Play services library and specify its version
     implementation("com.google.android.gms:play-services-auth:21.3.0")
-
-    //add auth
-    // Add the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-auth")
 
 
 }
