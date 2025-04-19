@@ -29,6 +29,8 @@ import java.util.Map;
 
 public class register_view extends AppCompatActivity {
 
+    private static final String TAG = "RegisterView"; // 用於 Logcat 標籤
+
     private EditText mEmail, mPassword;
     private Button mRegister, mUploadImage;
     private ImageView mImageView;
@@ -63,6 +65,9 @@ public class register_view extends AppCompatActivity {
                     if (uri != null) {
                         profileImageUri = uri;
                         Glide.with(this).load(uri).into(mImageView);
+                        Log.d(TAG, "圖片選擇成功: " + uri.toString());
+                    } else {
+                        Log.d(TAG, "未選擇圖片");
                     }
                 });
 
@@ -78,26 +83,34 @@ public class register_view extends AppCompatActivity {
         // 輸入驗證
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "請輸入信箱和密碼", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "輸入驗證失敗: 信箱或密碼為空");
             return;
         }
 
         if (profileImageUri == null) {
             Toast.makeText(this, "請選擇頭像圖片", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "輸入驗證失敗: 未選擇頭像圖片");
             return;
         }
 
         // 禁用按鈕防止重複提交
         mRegister.setEnabled(false);
         Toast.makeText(this, "註冊中...", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "開始註冊流程，信箱: " + email);
 
         // 創建用戶帳號
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        Log.d(TAG, "身份驗證成功，UID: " + mAuth.getCurrentUser().getUid());
                         uploadImageToFirebase();
+                        startActivity(new Intent(this, login_view.class));
+                        Toast.makeText(this, "註冊成功: " , Toast.LENGTH_LONG).show();
+                        finish();
                     } else {
-                        Toast.makeText(this, "註冊失敗: " + task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "未知錯誤";
+                        Toast.makeText(this, "註冊失敗: " + errorMsg, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "身份驗證失敗: " + errorMsg);
                         mRegister.setEnabled(true);
                     }
                 });
@@ -106,6 +119,8 @@ public class register_view extends AppCompatActivity {
     private void uploadImageToFirebase() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null || profileImageUri == null) {
+            Toast.makeText(this, "用戶未登錄或未選擇圖片", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "圖片上傳失敗: 用戶未登錄或未選擇圖片");
             mRegister.setEnabled(true);
             return;
         }
@@ -123,21 +138,28 @@ public class register_view extends AppCompatActivity {
                 .build();
 
         // 執行上傳
+        Log.d(TAG, "開始上傳圖片: " + imagePath);
         uploadTask = profileRef.putFile(profileImageUri, metadata);
         uploadTask.addOnProgressListener(taskSnapshot -> {
                     double progress = (100.0 * taskSnapshot.getBytesTransferred()) /
                             taskSnapshot.getTotalByteCount();
-                    Log.d("Upload", "進度: " + progress + "%");
+                    Log.d(TAG, "圖片上傳進度: " + progress + "%");
                 })
                 .addOnSuccessListener(taskSnapshot -> {
+                    Log.d(TAG, "圖片上傳成功");
                     // 獲取下載URL
                     profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        Log.d(TAG, "獲取下載URL成功: " + uri.toString());
                         updateUserProfile(user, uri.toString(), imagePath);
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(this, "獲取圖片URL失敗: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "獲取圖片URL失敗: " + e.getMessage());
+                        mRegister.setEnabled(true);
                     });
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "圖片上傳失敗: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "圖片上傳失敗: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "圖片上傳失敗: " + e.getMessage());
                     mRegister.setEnabled(true);
                 });
     }
@@ -148,12 +170,16 @@ public class register_view extends AppCompatActivity {
                 .setPhotoUri(Uri.parse(imageUrl))
                 .build();
 
+        Log.d(TAG, "開始更新用戶個人資料，顯示名稱: " + user.getEmail().split("@")[0] + ", 圖片URL: " + imageUrl);
         user.updateProfile(profileUpdates)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        Log.d(TAG, "個人資料更新成功");
                         saveUserDataToFirestore(user.getUid(), imageUrl, imagePath);
                     } else {
-                        Toast.makeText(this, "更新個人資料失敗", Toast.LENGTH_SHORT).show();
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "未知錯誤";
+                        Toast.makeText(this, "更新個人資料失敗: " + errorMsg, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "個人資料更新失敗: " + errorMsg);
                         mRegister.setEnabled(true);
                     }
                 });
@@ -166,19 +192,6 @@ public class register_view extends AppCompatActivity {
         userData.put("profileImagePath", imagePath);
         userData.put("createdAt", FieldValue.serverTimestamp());
         userData.put("lastLogin", FieldValue.serverTimestamp());
-
-        mFirestore.collection("users").document(userId)
-                .set(userData)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "註冊成功！", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, login_view.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "資料儲存失敗: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                    mRegister.setEnabled(true);
-                });
     }
 
     @Override
@@ -187,6 +200,7 @@ public class register_view extends AppCompatActivity {
         // 取消進行中的上傳任務
         if (uploadTask != null && uploadTask.isInProgress()) {
             uploadTask.cancel();
+            Log.d(TAG, "活動銷毀，取消圖片上傳任務");
         }
     }
 }
