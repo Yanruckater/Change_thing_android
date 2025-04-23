@@ -8,6 +8,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,6 +82,7 @@ public class UploadItemActivity extends AppCompatActivity {
         checkLocationPermission();
     }
 
+    //基本功
     private void initViews() {
         itemImageView = findViewById(R.id.itemImageView);
         itemNameEditText = findViewById(R.id.itemNameEditText);
@@ -89,12 +91,14 @@ public class UploadItemActivity extends AppCompatActivity {
         uploadButton = findViewById(R.id.uploadButton);
     }
 
+    //位置請求
     private void createLocationRequest() {
         locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL)
                 .setMinUpdateIntervalMillis(FASTEST_INTERVAL)
                 .build();
     }
 
+    //位置更新時的邏輯
     private void setupLocationCallback() {
         locationCallback = new LocationCallback() {
             @Override
@@ -111,6 +115,7 @@ public class UploadItemActivity extends AppCompatActivity {
         };
     }
 
+    //是否取得定位功能
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -123,6 +128,7 @@ public class UploadItemActivity extends AppCompatActivity {
         }
     }
 
+    //持續接收位置更新
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -136,6 +142,7 @@ public class UploadItemActivity extends AppCompatActivity {
         );
     }
 
+    //取得裝置最後的定位
     private void getLastLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -158,6 +165,7 @@ public class UploadItemActivity extends AppCompatActivity {
                 });
     }
 
+    //根據目前的經緯度，更新畫面上顯示的位置資訊
     private void updateLocationText() {
         runOnUiThread(() -> {
             if (latitude != 0.0 && longitude != 0.0) {
@@ -172,6 +180,7 @@ public class UploadItemActivity extends AppCompatActivity {
         });
     }
 
+    //地址文字
     private void fetchAddressFromLocation(double lat, double lng) {
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -193,6 +202,7 @@ public class UploadItemActivity extends AppCompatActivity {
         });
     }
 
+
     private String formatAddress(Address address) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
@@ -203,6 +213,7 @@ public class UploadItemActivity extends AppCompatActivity {
         }
         return sb.toString();
     }
+
 
     private void showCoordinatesFallback() {
         String coordinateText = String.format("座標: %.4f, %.4f", latitude, longitude);
@@ -241,4 +252,5 @@ public class UploadItemActivity extends AppCompatActivity {
     private void stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }
+
 }

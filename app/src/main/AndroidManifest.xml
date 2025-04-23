@@ -2,11 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <application
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
+    <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,8 +17,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Change_things_Android_final_demo"
         tools:targetApi="31">
-
-        <!--
+        <activity
+            android:name=".recyclerfile.DetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".recycler_view"
+            android:exported="false" />
+                <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
              To get one, follow the directions here:
@@ -35,9 +41,7 @@
         <activity
             android:name=".Google_map_api"
             android:exported="true"
-            android:label="@string/title_activity_google_map_api" >
-
-        </activity>
+            android:label="@string/title_activity_google_map_api" />
         <activity
             android:name=".change_view"
             android:exported="false" />
@@ -55,6 +59,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
