@@ -1,20 +1,33 @@
 package com.example.change_things_android_final_demo;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -22,14 +35,28 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.change_things_android_final_demo.Dataupload.DataClass;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Firebase;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,17 +66,28 @@ import java.util.concurrent.Executors;
 
 public class UploadItemActivity extends AppCompatActivity {
 
+    //firebase
+    private ImageView SelectPhoto;
+    private Bitmap bitmap;
+    private TextInputEditText itemNameEditText, itemDescEditText, itemPriceEditText, itemHopeChangeEditText;
+    private MaterialButton uploadButton;
+    private Uri imageUri;
+    private AlertDialog loadingDialog;
+
+    //初始化firebase
+    private DatabaseReference mDatabase;
+    private FirebaseStorage mFirebaseStrong;
+    private StorageReference mStorageRef;
+
+    //loaction
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final int IMAGE_PICK_CODE = 1000;
     private static final long UPDATE_INTERVAL = 10000;  // 10秒
     private static final long FASTEST_INTERVAL = 5000;  // 5秒
     private static final int MAX_GEOCODE_RESULTS = 1;
 
-    // UI components
-    private ImageView itemImageView;
-    private TextInputEditText itemNameEditText, itemDescEditText;
+    // location UI components
     private TextView locationTextView;
-    private MaterialButton uploadButton;
 
     // Location related
     private FusedLocationProviderClient fusedLocationClient;
@@ -71,6 +109,25 @@ public class UploadItemActivity extends AppCompatActivity {
             return insets;
         });
 
+        //初始化Firebase
+        FirebaseApp.initializeApp(this);
+        mFirebaseStrong = FirebaseStorage.getInstance();
+        mStorageRef = mFirebaseStrong.getReference();
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+
+        if (user != null) {
+            String uid = user.getUid();
+            mDatabase = FirebaseDatabase.getInstance().getReference("Images").child(uid);
+            Log.d("FirebaseAuth", "使用者已登入：" + user.getEmail());
+        } else {
+            Log.d("FirebaseAuth", "尚未登入！");
+            Toast.makeText(this, "請先登入帳號", Toast.LENGTH_SHORT).show();
+            finish(); // 強制關閉這個 activity，避免 NullPointer
+            return;
+        }
+
         // 初始化位置服务
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -80,16 +137,139 @@ public class UploadItemActivity extends AppCompatActivity {
         setupLocationCallback();
         initViews();
         checkLocationPermission();
+
+
+        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if(result.getResultCode() == RESULT_OK){
+                            Intent data = result.getData();
+                            imageUri = data.getData();
+                            SelectPhoto.setImageURI(imageUri);
+                        }else{
+                            Toast.makeText(UploadItemActivity.this, "未選擇圖片", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+
+        SelectPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent photopick = new Intent();
+                photopick.setAction(Intent.ACTION_GET_CONTENT);
+                photopick.setType("image/*");
+                activityResultLauncher.launch(photopick);
+            }
+        });
+
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (imageUri != null) {
+                    uploadTofireBase(imageUri);
+                } else {
+                    Toast.makeText(UploadItemActivity.this, "未選擇圖片", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+        if (user != null) {
+            Log.d("FirebaseAuth", "使用者已登入：" + user.getEmail());
+        } else {
+            Log.d("FirebaseAuth", "尚未登入！");
+        }
+
     }
 
+    private void  uploadTofireBase(Uri imageUri) {
+        String itemName = itemNameEditText.getText().toString();
+        String itemDesc = itemDescEditText.getText().toString();
+        String itemPrice = itemPriceEditText.getText().toString();
+        String itemHopeChange = itemHopeChangeEditText.getText().toString();
+
+        if(itemName.isEmpty() || itemDesc.isEmpty() || itemPrice.isEmpty() || itemHopeChange.isEmpty()){
+            Toast.makeText(this, "請輸入物品名稱、描述、欲交換物和價錢", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        StorageReference imageReference = mStorageRef.child("item_picture").child(uid).child("item_images").child(fileName);
+
+        imageReference.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    imageReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                        DataClass dataClass = new DataClass(
+                                uri.toString(),
+                                itemName,
+                                itemDesc,
+                                itemHopeChange,
+                                itemPrice,
+                                locationTextView.getText().toString());
+
+                        String key = mDatabase.push().getKey();
+                        if (key != null) {
+                            mDatabase.child(key).setValue(dataClass);
+                            Toast.makeText(UploadItemActivity.this, "上傳成功", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(UploadItemActivity.this, recycler_view.class));
+                            finish();
+                }
+            });
+        }).addOnProgressListener(snapshot -> showLoadingDialog())
+                .addOnFailureListener(e -> {
+                    Toast.makeText(UploadItemActivity.this, "上傳失敗", Toast.LENGTH_SHORT).show();
+
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        dismissLoadingDialog();
+                    }
+                });
+    }
+
+    private String getFileExtension(Uri fileUri) {
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(fileUri));
+    }
     //基本功
     private void initViews() {
-        itemImageView = findViewById(R.id.itemImageView);
+
+        SelectPhoto = findViewById(R.id.itemImageView);
         itemNameEditText = findViewById(R.id.itemNameEditText);
         itemDescEditText = findViewById(R.id.itemDescEditText);
+        itemPriceEditText = findViewById(R.id.itemPriceEditText);
         locationTextView = findViewById(R.id.locationTextView);
+        itemHopeChangeEditText = findViewById(R.id.itemExchangeEditText);
         uploadButton = findViewById(R.id.uploadButton);
     }
+
+
+    //loading彈出視窗
+    private void showLoadingDialog() {
+        if (isFinishing() || isDestroyed()) return; // 避免已結束還呼叫
+        if (loadingDialog != null && loadingDialog.isShowing()) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.loading_view, null);
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        loadingDialog = builder.create();
+        loadingDialog.show();
+    }
+
+    private void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            if (!isFinishing() && !isDestroyed()) {
+                loadingDialog.dismiss();
+            }
+            loadingDialog = null;
+        }
+    }
+
 
     //位置請求
     private void createLocationRequest() {

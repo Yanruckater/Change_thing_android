@@ -61,7 +61,7 @@ public class login_view extends AppCompatActivity {
                         // 登入成功
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(login_view.this, "登入成功", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(login_view.this, UploadItemActivity.class);
+                        Intent intent = new Intent(login_view.this, recycler_view.class);
                         startActivity(intent);
                         finish();
                     } else {

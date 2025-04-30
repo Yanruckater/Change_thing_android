@@ -1,7 +1,9 @@
 package com.example.change_things_android_final_demo;
 
 import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,11 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.change_things_android_final_demo.recyclerfile.MyAdapter;
 import com.example.change_things_android_final_demo.recyclerfile.itme_recycler;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class recycler_view extends AppCompatActivity {
+
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +30,7 @@ public class recycler_view extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recycler_view);
 
+        fab = findViewById(R.id.fab);
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
 
         List<itme_recycler> items = new ArrayList<>();
@@ -40,6 +46,16 @@ public class recycler_view extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new MyAdapter(getApplicationContext(),items));
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(recycler_view.this, UploadItemActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
     }

@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- 上傳圖片區 -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:clickable="true"
@@ -32,7 +32,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_launcher_foreground" />
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- 物品名稱 -->
         <com.google.android.material.textfield.TextInputLayout
@@ -61,6 +61,33 @@
                 android:layout_height="wrap_content"
                 android:minLines="3" />
 
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 希望交換物 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="希望交換物">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/itemExchangeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="價錢">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/itemPriceEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- GPS顯示 -->
