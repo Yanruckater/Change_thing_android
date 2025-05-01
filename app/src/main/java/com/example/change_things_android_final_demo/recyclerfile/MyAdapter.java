@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.change_things_android_final_demo.R;
 
 import java.util.List;
@@ -30,7 +31,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyviewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyviewHolder holder, int position) {
-        holder.productImage.setImageResource(items.get(position).getImage());
+
+        Glide.with(context).load(items.get(position).getImage()).placeholder(R.drawable.loading).into(holder.productImage);
+
         holder.productName.setText(items.get(position).getName());
         holder.textViewExchange.setText(items.get(position).getExchangeItem());
         holder.productPrice.setText(items.get(position).getPrice());
@@ -44,6 +47,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyviewHolder> {
             intent.putExtra("price", items.get(position).getPrice());
             intent.putExtra("status", items.get(position).getStatus());
             intent.putExtra("image", items.get(position).getImage());
+            intent.putExtra("location", items.get(position).getLocation());
 
 
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -35,9 +35,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void test1(View view) {
-        Intent intent = new Intent(MainActivity.this, recycler_view.class);
-        startActivity(intent);
-
-    }
 }

@@ -4,8 +4,10 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,6 +22,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+
 public class recycler_view extends AppCompatActivity {
 
     FloatingActionButton fab;
@@ -32,20 +42,40 @@ public class recycler_view extends AppCompatActivity {
 
         fab = findViewById(R.id.fab);
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
         List<itme_recycler> items = new ArrayList<>();
-        items.add(new itme_recycler("商品名稱1", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱1", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱1", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱3", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱4", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱1", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱1", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱5", "希望交換物1", "$50.00", "可交換", R.drawable.ic_launcher_foreground));
-        items.add(new itme_recycler("商品名稱1", "希望交換物1", "$10.00", "可交換", R.drawable.ic_launcher_foreground));
+        MyAdapter adapter = new MyAdapter(getApplicationContext(),items);
+        recyclerView.setAdapter(adapter);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MyAdapter(getApplicationContext(),items));
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Images").child(uid);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                items.clear(); // 清空列表
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    String name = dataSnapshot.child("caption").getValue(String.class);
+                    String desc = dataSnapshot.child("text").getValue(String.class);
+                    String price = dataSnapshot.child("itemprice").getValue(String.class);
+                    String exchange = dataSnapshot.child("itemchange").getValue(String.class);
+                    String status = "可交換"; //寫死，之後有時間做出更新再來改
+                    String image = dataSnapshot.child("imageURL").getValue(String.class);
+                    String location = dataSnapshot.child("location").getValue(String.class);
+
+                    items.add(new itme_recycler(name, exchange, price, status, image, location));
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(recycler_view.this, "資料讀取失敗", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
