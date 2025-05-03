@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "881064092848",
+    "project_id": "sharetools-ed396",
+    "storage_bucket": "sharetools-ed396.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881064092848:android:1c74f027e7ef4b79270775",
+        "android_client_info": {
+          "package_name": "com.example.change_things_android_final_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8npRFR36lxqisdqTiFmqPXGCkJnZrNf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
