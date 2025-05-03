@@ -32,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class recycler_view extends AppCompatActivity {
 
-    FloatingActionButton fab;
+    FloatingActionButton fab, fab1, fab2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,9 @@ public class recycler_view extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
 
         fab = findViewById(R.id.fab);
+        fab1 = findViewById(R.id.fab1);
+        fab2 = findViewById(R.id.fab2);
+
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -50,22 +53,24 @@ public class recycler_view extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Images").child(uid);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Images");
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 items.clear(); // 清空列表
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String name = dataSnapshot.child("caption").getValue(String.class);
-                    String desc = dataSnapshot.child("text").getValue(String.class);
-                    String price = dataSnapshot.child("itemprice").getValue(String.class);
-                    String exchange = dataSnapshot.child("itemchange").getValue(String.class);
-                    String status = "可交換"; //寫死，之後有時間做出更新再來改
-                    String image = dataSnapshot.child("imageURL").getValue(String.class);
-                    String location = dataSnapshot.child("location").getValue(String.class);
+                for(DataSnapshot userdataSnapuse : snapshot.getChildren()) {
+                    for (DataSnapshot dataSnapshot : userdataSnapuse.getChildren()) {
+                        String name = dataSnapshot.child("caption").getValue(String.class);
+                        String desc = dataSnapshot.child("text").getValue(String.class);
+                        String price = "售價: " + dataSnapshot.child("itemprice").getValue(String.class);
+                        String exchange = "希望交換物: " + dataSnapshot.child("itemchange").getValue(String.class);
+                        String status = "可交換"; //寫死，之後有時間做出更新再來改
+                        String image = dataSnapshot.child("imageURL").getValue(String.class);
+                        String location = dataSnapshot.child("location").getValue(String.class);
 
-                    items.add(new itme_recycler(name, exchange, price, status, image, location));
+                        items.add(new itme_recycler(name, exchange, price, status, image, location));
+                    }
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -81,6 +86,22 @@ public class recycler_view extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(recycler_view.this, UploadItemActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        fab1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(recycler_view.this, Google_map_api.class);
+                startActivity(intent);
+            }
+        });
+
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(recycler_view.this,own_recycler_view.class);
                 startActivity(intent);
             }
         });

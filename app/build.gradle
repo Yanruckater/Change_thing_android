@@ -52,6 +52,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
     implementation libs.activity
     implementation libs.firebase.database
+    implementation libs.lifecycle.livedata.ktx
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
 
     // 測試
     testImplementation 'junit:junit:4.13.2'

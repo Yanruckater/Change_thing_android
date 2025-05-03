@@ -6,4 +6,13 @@
     </style>
 
     <style name="Theme.Change_things_Android_final_demo" parent="Base.Theme.Change_things_Android_final_demo" />
+
+    <style name="Theme.Change_things_Android_final_demo.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Change_things_Android_final_demo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.Change_things_Android_final_demo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

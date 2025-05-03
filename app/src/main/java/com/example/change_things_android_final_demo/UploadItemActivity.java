@@ -187,6 +187,7 @@ public class UploadItemActivity extends AppCompatActivity {
         String itemPrice = itemPriceEditText.getText().toString();
         String itemHopeChange = itemHopeChangeEditText.getText().toString();
 
+
         if(itemName.isEmpty() || itemDesc.isEmpty() || itemPrice.isEmpty() || itemHopeChange.isEmpty()){
             Toast.makeText(this, "請輸入物品名稱、描述、欲交換物和價錢", Toast.LENGTH_SHORT).show();
             return;
@@ -205,6 +206,8 @@ public class UploadItemActivity extends AppCompatActivity {
                                 itemDesc,
                                 itemHopeChange,
                                 itemPrice,
+                                latitude,
+                                longitude,
                                 locationTextView.getText().toString());
 
                         String key = mDatabase.push().getKey();

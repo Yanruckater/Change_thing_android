@@ -9,8 +9,11 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,6 +25,21 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.change_things_android_final_demo.databinding.ActivityGoogleMapApiBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import androidx.annotation.Nullable;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
+
 
 public class Google_map_api extends FragmentActivity implements OnMapReadyCallback {
 
@@ -57,11 +75,7 @@ public class Google_map_api extends FragmentActivity implements OnMapReadyCallba
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         }
-
-        // 原有的台北101標記
-        LatLng taipei101 = new LatLng(25.0330, 121.5654);
-        mMap.addMarker(new MarkerOptions().position(taipei101).title("Welcome to Taiwan"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(taipei101));
+        loadItemsFromFirebase();
     }
     private void enableLocationFeatures() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -105,4 +119,61 @@ public class Google_map_api extends FragmentActivity implements OnMapReadyCallba
             }
         }
     }
+
+    public void loadItemsFromFirebase(){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Image");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    String name = dataSnapshot.child("caption").getValue(String.class);
+                    String price = dataSnapshot.child("itemprice").getValue(String.class);
+                    String exchange = dataSnapshot.child("itemchange").getValue(String.class);
+                    double lat = dataSnapshot.child("latitude").getValue(Double.class);
+                    double lon = dataSnapshot.child("longitude").getValue(Double.class);
+                    String image = dataSnapshot.child("imageURL").getValue(String.class);
+
+                    LatLng itemLocation = new LatLng(lat, lon);
+
+                    Glide.with(Google_map_api.this).asBitmap().load(image).into(new CustomTarget<Bitmap>(100, 100) {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            Marker marker = mMap.addMarker(new MarkerOptions().position(itemLocation).title(name).snippet("希望交換物:" + exchange + "\n價格:" + price).icon(BitmapDescriptorFactory.fromBitmap(resource)));
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Google_map_api.this,"讀取失敗:" + error.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Nullable
+            @Override
+            public View getInfoContents(@NonNull Marker marker) {
+                return null; // 使用系統預設外框
+            }
+
+            @Nullable
+            @Override
+            public View getInfoWindow(@NonNull Marker marker) {
+                View view = getLayoutInflater().inflate(R.layout.google_map_onclick,null);
+
+                TextView titleTextView = view.findViewById(R.id.titleTextView);
+                TextView snippetTextView = view.findViewById(R.id.snippetTextView);
+
+                titleTextView.setText(marker.getTitle());
+                snippetTextView.setText(marker.getSnippet());
+
+                return view;
+            }
+        });
+    }
+
 }

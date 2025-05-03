@@ -2,6 +2,7 @@ package com.example.change_things_android_final_demo.Dataupload;
 
 public class DataClass {
     private  String imageURL,caption,text,Location,itemchange,itemprice;
+    private double latitude,longitude;
 
     public DataClass(){
         //空建構子
@@ -47,6 +48,22 @@ public class DataClass {
         this.text = text;
     }
 
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
     public String getLocation() {
         return Location;
     }
@@ -56,12 +73,15 @@ public class DataClass {
     }
 
 
-    public DataClass(String imageURL, String caption, String text,String itemchange, String itemprice ,String location) {
+
+    public DataClass(String imageURL, String caption, String text, String itemchange, String itemprice , double latitude, double longitude,String location) {
         this.imageURL = imageURL;
         this.caption = caption;
         this.text = text;
         this.itemchange = itemchange;
         this.itemprice = itemprice;
+        this.latitude = latitude;
+        this.longitude = longitude;
         Location = location;
     }
 }
