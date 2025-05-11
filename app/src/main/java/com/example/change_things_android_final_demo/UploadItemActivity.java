@@ -214,7 +214,10 @@ public class UploadItemActivity extends AppCompatActivity {
                         if (key != null) {
                             mDatabase.child(key).setValue(dataClass);
                             Toast.makeText(UploadItemActivity.this, "上傳成功", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(UploadItemActivity.this, recycler_view.class));
+                            startActivity(new Intent(UploadItemActivity.this, Navigation_drawer_view.class));
+                            Intent intent = new Intent(UploadItemActivity.this, Navigation_drawer_view.class);
+                            intent.putExtra("target_fragment","gallery");
+                            startActivity(intent);
                             finish();
                 }
             });

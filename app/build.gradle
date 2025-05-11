@@ -1,22 +1,19 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.gms.google-services'  // Firebase Gradle 插件
+    id 'com.google.gms.google-services'
 }
 
 android {
     namespace 'com.example.change_things_android_final_demo'
     compileSdk 35
-
     defaultConfig {
         applicationId "com.example.change_things_android_final_demo"
-        minSdk 29
+        minSdk 26
         targetSdk 35
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -28,44 +25,47 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures {
-        viewBinding true
+        viewBinding true // ViewBinding 已啟用，正確
+        dataBinding true
     }
+    // 移除 android 內部的 dependencies 區塊
 }
 
 dependencies {
     // Android 基本元件
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.activity:activity-ktx:1.8.2'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.activity:activity-ktx:1.10.1'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
 
-    // Firebase (使用 BoM 管理版本)
-    implementation platform('com.google.firebase:firebase-bom:33.12.0')
+    // Firebase（使用 BoM 統一管理版本）
+    implementation platform('com.google.firebase:firebase-bom:33.1.1')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-firestore'
 
-    // Google Play 服務
+    // Google Play Services
     implementation 'com.google.android.gms:play-services-auth:21.3.0'
-    implementation 'com.google.android.gms:play-services-location:21.2.0'
+    implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
-    implementation libs.activity
-    implementation libs.firebase.database
-    implementation libs.lifecycle.livedata.ktx
-    implementation libs.lifecycle.viewmodel.ktx
-    implementation libs.navigation.fragment
-    implementation libs.navigation.ui
 
-    // 測試
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    // Navigation Component
+    implementation 'androidx.navigation:navigation-fragment:2.7.7'
+    implementation 'androidx.navigation:navigation-ui:2.7.7'
 
-    // Glide（如果你需要圖片載入功能）
+    // Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+
+    // Glide 圖片處理
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
-    //RecyclerView（如果你需要列表）
-    implementation 'androidx.recyclerview:recyclerview:1.3.1'
+    // 測試用
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

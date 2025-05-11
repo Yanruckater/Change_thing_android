@@ -1,5 +1,6 @@
 package com.example.change_things_android_final_demo;
 
+import android.app.NativeActivity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,13 +11,16 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.change_things_android_final_demo.recyclerfile.MyAdapter;
 import com.example.change_things_android_final_demo.recyclerfile.itme_recycler;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -32,7 +36,10 @@ import com.google.firebase.database.ValueEventListener;
 
 public class recycler_view extends AppCompatActivity {
 
-    FloatingActionButton fab, fab1, fab2;
+    FloatingActionButton fab;
+    DrawerLayout drawerLayout;
+    MaterialToolbar toolbar;
+    NativeActivity nativeActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +48,8 @@ public class recycler_view extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
 
         fab = findViewById(R.id.fab);
-        fab1 = findViewById(R.id.fab1);
-        fab2 = findViewById(R.id.fab2);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -89,25 +96,6 @@ public class recycler_view extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        fab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(recycler_view.this, Google_map_api.class);
-                startActivity(intent);
-            }
-        });
-
-        fab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(recycler_view.this,own_recycler_view.class);
-                startActivity(intent);
-            }
-        });
-
-
-
 
     }
 }
