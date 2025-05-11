@@ -9,9 +9,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class own_recycler_view extends AppCompatActivity {
 
-    FloatingActionButton fab, fab1;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +38,6 @@ public class own_recycler_view extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view);
 
         fab = findViewById(R.id.fab);
-        fab1 = findViewById(R.id.fab1);
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -85,17 +81,5 @@ public class own_recycler_view extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        fab1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(own_recycler_view.this, Google_map_api.class);
-                startActivity(intent);
-            }
-        });
-
-
-
-
     }
 }

@@ -6,18 +6,19 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_color"
-    android:padding="16dp"
+    android:background="#FFFFFF"
+    android:padding="20dp"
     tools:context=".register_view">
 
-    <!-- 上方頭像 -->
+    <!-- 縮小版LOGO頭像 -->
     <ImageView
         android:id="@+id/imageview"
-        android:layout_width="154dp"
-        android:layout_height="141dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/profile_image_desc"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/baseline_account_circle_24" />
@@ -28,12 +29,12 @@
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:backgroundTint="#1C2224"
-        android:text="@string/select_profile_picture"
+        android:backgroundTint="#2196F3"
+        android:text="選擇大頭貼"
         android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageview"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageview" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Email 輸入框 -->
     <TextView
@@ -41,85 +42,90 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/set_email"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="Email"
+        android:textColor="#4CAF50"
+        android:textStyle="bold"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/upload_image"
-        android:layout_marginLeft="16dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/editTextEmailAddress2"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/email_hint"
+        android:hint="example@domain.com"
+        android:padding="12dp"
+        android:background="@drawable/bg_input_field"
         android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView5" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Password 輸入框 -->
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/set_password"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:text="密碼"
+        android:textColor="#4CAF50"
+        android:textStyle="bold"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/editTextEmailAddress2"
-        android:layout_marginLeft="16dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/editregisterPassword"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/password_hint"
+        android:hint="請輸入密碼"
+        android:padding="12dp"
+        android:background="@drawable/bg_input_field"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView4" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Confirm Password 輸入框 -->
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/confirm_password"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:text="確認密碼"
+        android:textColor="#4CAF50"
+        android:textStyle="bold"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/editregisterPassword"
-        android:layout_marginLeft="16dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/editregisterPassword2"
         android:layout_width="0dp"
         android:layout_height="52dp"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/confirm_password_hint"
+        android:hint="請再次輸入密碼"
+        android:padding="12dp"
+        android:background="@drawable/bg_input_field"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textView3" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 註冊按鈕 -->
     <Button
         android:id="@+id/register"
         android:layout_width="0dp"
         android:layout_height="54dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="32dp"
-        android:backgroundTint="#1C2224"
-        android:text="@string/register"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="28dp"
+        android:text="註冊"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:backgroundTint="#2196F3"
+        app:layout_constraintTop_toBottomOf="@id/editregisterPassword2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editregisterPassword2" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

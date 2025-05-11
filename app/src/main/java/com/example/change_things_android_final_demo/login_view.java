@@ -20,12 +20,14 @@ import com.google.firebase.auth.FirebaseUser;
 public class login_view extends AppCompatActivity {
 
     public Button mbuttonLogin;
-    private TextView mtextViewEmail, mtextViewPassword;
+    private TextView mtextViewEmail, mtextViewPassword,mtextViewRegister;
     ImageView mimageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        com.google.firebase.FirebaseApp.initializeApp(this);
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login_view);
@@ -38,8 +40,9 @@ public class login_view extends AppCompatActivity {
         mtextViewEmail = findViewById(R.id.editTextEmailAddress);
         mtextViewPassword = findViewById(R.id.editTextPassword);
         mimageView = findViewById(R.id.imageView);
+        mtextViewRegister = findViewById(R.id.registerText);
 
-        mimageView.setImageDrawable(getResources().getDrawable(R.drawable.baseline_account_circle_24));
+        mimageView.setImageDrawable(getResources().getDrawable(R.drawable.app_logo));
 
         //初始化firebase
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -61,7 +64,7 @@ public class login_view extends AppCompatActivity {
                         // 登入成功
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(login_view.this, "登入成功", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(login_view.this, recycler_view.class);
+                        Intent intent = new Intent(login_view.this, Navigation_drawer_view.class);
                         startActivity(intent);
                         finish();
                     } else {
@@ -69,6 +72,14 @@ public class login_view extends AppCompatActivity {
                         Toast.makeText(login_view.this, "登入失敗：" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
+
+        mtextViewRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(login_view.this, register_view.class);
+                startActivity(intent);
             }
         });
     }
