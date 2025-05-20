@@ -71,7 +71,7 @@ public class GalleryFragment extends Fragment {
 
         binding.recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         items = new ArrayList<>();
-        adapter = new MyAdapter(getContext(), items);
+        adapter = new MyAdapter(getContext(), items,"gallery");
         binding.recyclerview.setAdapter(adapter);
 
         // 初始化 Firebase
@@ -101,7 +101,6 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 items.clear();
-                // 因為 databaseReference 已經是 .child(uid)，所以這裡的 snapshot 直接是該 uid 下的商品列表
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) { // 遍歷該用戶的所有商品
                     String name = dataSnapshot.child("caption").getValue(String.class);
                     // String desc = dataSnapshot.child("text").getValue(String.class); // 未使用
@@ -110,9 +109,12 @@ public class GalleryFragment extends Fragment {
                     String status = "可交換"; // 暫時寫死
                     String image = dataSnapshot.child("imageURL").getValue(String.class);
                     String location = dataSnapshot.child("location").getValue(String.class);
+                    String userImage = dataSnapshot.child("userImage").getValue(String.class);
+                    String userName = dataSnapshot.child("userName").getValue(String.class);
+                    String itemkey = dataSnapshot.getKey();
 
                     if (name != null && image != null) {
-                        items.add(new itme_recycler(name, exchange, price, status, image, location));
+                        items.add(new itme_recycler(name, exchange, price, status, image, location, userName, userImage, itemkey));
                     }
                 }
                 if (adapter != null) {

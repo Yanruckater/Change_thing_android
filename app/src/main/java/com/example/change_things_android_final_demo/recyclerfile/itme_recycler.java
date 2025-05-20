@@ -8,15 +8,38 @@ public class itme_recycler {
     private String image;              // 圖片資源 ID
     private String Location;
 
+    private String userName;
+    private String userImage;
+    private String itemkey;
+
     public itme_recycler(){}    // 空建構子
 
-    public itme_recycler(String name, String exchangeItem, String price, String status, String image, String location) {
+    public itme_recycler(String name, String exchangeItem, String price, String status, String image, String location, String userName, String userImage, String itemkey) {
         this.name = name;
         this.exchangeItem = exchangeItem;
         this.price = price;
         this.status = status;
         this.image = image;
         Location = location;
+        this.userName = userName;
+        this.userImage = userImage;
+        this.itemkey = itemkey;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
+
+    public void setUserName(String userName){
+        this.userName = userName;
+    }
+
+    public String getUserImage(){
+        return userImage;
+    }
+
+    public void setUserImage(String userImage){
+        this.userImage = userImage;
     }
 
     public String getName() {
@@ -65,5 +88,13 @@ public class itme_recycler {
 
     public void setLocation(String location) {
         Location = location;
+    }
+
+    public String getItemkey(){
+        return itemkey;
+    }
+
+    public void setItemkey(String itemkey){
+        this.itemkey = itemkey;
     }
 }

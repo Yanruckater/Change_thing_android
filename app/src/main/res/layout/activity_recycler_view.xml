@@ -20,7 +20,7 @@
             android:paddingBottom="30dp"
             android:clipToPadding="false" />
 
-        <!-- 三顆 FloatingActionButton -->
+        <!--  FloatingActionButton -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"

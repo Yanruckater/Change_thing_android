@@ -1,49 +1,113 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
-    <ImageView
-        android:id="@+id/detailImage"
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="20dp"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:scaleType="centerCrop" />
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF">
 
-    <TextView
-        android:id="@+id/detailName"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <!-- 商品圖片 -->
+        <ImageView
+            android:id="@+id/detailImage"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_marginBottom="16dp"
+            android:scaleType="centerCrop"
+            android:background="#E0F2F1"
+            android:contentDescription="商品圖片" />
 
-    <TextView
-        android:id="@+id/detailExchange"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <!-- 使用者資訊欄 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp"
+            android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/detailPrice"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/userAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="12dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/baseline_account_circle_24"
 
-    <TextView
-        android:id="@+id/detailStatus"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+                android:contentDescription="使用者頭像" />
 
-    <TextView
-        android:id="@+id/detailLocation"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="使用者名稱"
+                android:textSize="16sp"
+                android:textColor="#212121"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
 
-</LinearLayout>
+        <!-- 商品名稱 -->
+        <TextView
+            android:id="@+id/detailName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textColor="#212121"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 分隔線 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 希望交換物 -->
+        <TextView
+            android:id="@+id/detailExchange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#4CAF50"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="6dp" />
+
+        <!-- 價格 -->
+        <TextView
+            android:id="@+id/detailPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#2196F3"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="6dp" />
+
+        <!-- 狀態 -->
+        <TextView
+            android:id="@+id/detailStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#FF5722"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="6dp" />
+
+        <!-- 地點 -->
+        <TextView
+            android:id="@+id/detailLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#757575"
+            android:fontFamily="sans-serif"
+            android:layout_marginBottom="20dp" />
+
+        <!-- 行動按鈕 -->
+
+    </LinearLayout>
+</ScrollView>

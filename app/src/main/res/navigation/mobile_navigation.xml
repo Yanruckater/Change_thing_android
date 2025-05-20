@@ -28,4 +28,16 @@
         android:name="com.example.change_things_android_final_demo.setting_view"
         android:label="設定"
         tools:layout="@layout/activity_setting_view" />
+
+    <fragment
+        android:id="@+id/nav_detail"
+        android:name="com.example.change_things_android_final_demo.recyclerfile.DetailActivity"
+        android:label="商品詳細資訊"
+        tools:layout="@layout/activity_detail" />
+
+    <fragment
+        android:id="@+id/nav_detail2"
+        android:name="com.example.change_things_android_final_demo.recyclerfile.DetailActivity2"
+        android:label="上傳商品詳細資訊"
+        tools:layout="@layout/activity_detail2"/>
 </navigation>
