@@ -19,7 +19,6 @@ import com.example.change_things_android_final_demo.databinding.ActivityRecycler
 
 import com.example.change_things_android_final_demo.Google_map_api; // 假設這是你要跳轉的 Activity
 import com.example.change_things_android_final_demo.UploadItemActivity; // 假設這是你要跳轉的 Activity
-import com.example.change_things_android_final_demo.own_recycler_view;  // 假設這是你要跳轉的 Activity
 import com.example.change_things_android_final_demo.recyclerfile.MyAdapter;
 import com.example.change_things_android_final_demo.recyclerfile.itme_recycler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -76,7 +75,7 @@ public class HomeFragment extends Fragment {
         // 初始化 RecyclerView
         binding.recyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         items = new ArrayList<>();
-        adapter = new MyAdapter(getContext(), items); // 使用 getContext()
+        adapter = new MyAdapter(getContext(), items,"home"); // 使用 getContext()
         binding.recyclerview.setAdapter(adapter);
 
         // 初始化 Firebase
@@ -111,29 +110,21 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 items.clear(); // 清空列表
-                // 你的 Firebase 資料結構是 Images -> UserID -> ItemID -> ItemDetails
-                // 所以需要遍歷兩層 snapshot.getChildren()
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) { // 第一層是 UserID (或 Images 下直接是 ItemID?)
-                    // 如果你的 Images 節點下直接就是商品列表 (沒有按 UserID 分組)，那麼這裡的遍歷方式需要調整
-                    // 根據你 recycler_view.java 的邏輯，看起來是 Images -> UserID -> ItemID
-                    // 但你那裡的 databaseReference 是 "Images"，然後遍歷 snapshot.getChildren() 兩次
-                    // 這暗示 Images 下直接是各個 User 的節點，每個 User 節點下才是他們的商品。
-                    // 如果 Images 下就是商品列表 (沒有 UserID 這層)，那麼只需要一層 for loop。
-                    // 假設 Images -> UserID -> ItemID
-                    // for(DataSnapshot userdataSnapuse : snapshot.getChildren()) { // 這是原來的，可能代表 UserID
-                    //    for (DataSnapshot dataSnapshot : userdataSnapuse.getChildren()) { // 這是 ItemID
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                     for (DataSnapshot dataSnapshot : userSnapshot.getChildren()) { // 假設 userSnapshot 是 User 的節點
                         String name = dataSnapshot.child("caption").getValue(String.class);
-                        // String desc = dataSnapshot.child("text").getValue(String.class); // 在 recycler_view.java 中沒用到
                         String price = "售價: " + dataSnapshot.child("itemprice").getValue(String.class);
                         String exchange = "希望交換物: " + dataSnapshot.child("itemchange").getValue(String.class);
                         String status = "可交換"; // 暫時寫死
                         String image = dataSnapshot.child("imageURL").getValue(String.class);
                         String location = dataSnapshot.child("location").getValue(String.class);
+                        String userImage = dataSnapshot.child("userImage").getValue(String.class);
+                        String userName = dataSnapshot.child("userName").getValue(String.class);
+                        String itemkey = dataSnapshot.getKey();
 
                         // 避免加入空的資料
                         if (name != null && image != null) {
-                            items.add(new itme_recycler(name, exchange, price, status, image, location));
+                            items.add(new itme_recycler(name, exchange, price, status, image, location, userName, userImage, itemkey));
                         }
                     }
                 }
@@ -145,7 +136,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (getContext() != null) {
-                    Toast.makeText(getContext(), "資料讀取失敗: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "已成功登出!" , Toast.LENGTH_SHORT).show();
                 }
             }
         };

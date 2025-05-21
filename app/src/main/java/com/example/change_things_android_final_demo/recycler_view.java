@@ -56,7 +56,7 @@ public class recycler_view extends AppCompatActivity {
 
 
         List<itme_recycler> items = new ArrayList<>();
-        MyAdapter adapter = new MyAdapter(getApplicationContext(),items);
+        MyAdapter adapter = new MyAdapter(getApplicationContext(),items,"gallery");
         recyclerView.setAdapter(adapter);
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -75,8 +75,12 @@ public class recycler_view extends AppCompatActivity {
                         String status = "可交換"; //寫死，之後有時間做出更新再來改
                         String image = dataSnapshot.child("imageURL").getValue(String.class);
                         String location = dataSnapshot.child("location").getValue(String.class);
+                        String userImage = dataSnapshot.child("userImage").getValue(String.class);
+                        String userName = dataSnapshot.child("userName").getValue(String.class);
+                        String itemkey = dataSnapshot.getKey();
 
-                        items.add(new itme_recycler(name, exchange, price, status, image, location));
+
+                        items.add(new itme_recycler(name, exchange, price, status, image, location,userName,userImage,itemkey));
                     }
                 }
                 adapter.notifyDataSetChanged();

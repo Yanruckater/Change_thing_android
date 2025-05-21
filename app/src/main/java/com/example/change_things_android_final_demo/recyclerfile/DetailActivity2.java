@@ -1,6 +1,8 @@
 package com.example.change_things_android_final_demo.recyclerfile;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,13 +20,23 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.change_things_android_final_demo.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-public class DetailActivity extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DetailActivity2 extends Fragment {
     private ImageView imageView;
     private String name, exchangeItem, price, status, location;
     private String image;
 
-    public DetailActivity() {
+    private MyAdapter adapter;
+    private List<itme_recycler> items;
+
+    public DetailActivity2() {
         // Required empty public constructor
     }
 
@@ -32,7 +45,8 @@ public class DetailActivity extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_detail, container, false);
+        View view = inflater.inflate(R.layout.activity_detail2, container, false);
+        FloatingActionButton deleteBtn = view.findViewById(R.id.buttondelect);
 
         ImageView imageView = view.findViewById(R.id.detailImage);
         TextView nameView = view.findViewById(R.id.detailName);
@@ -44,6 +58,10 @@ public class DetailActivity extends Fragment {
         ImageView userImage = view.findViewById(R.id.userAvatar);
         TextView userName = view.findViewById(R.id.userName);
 
+        items = new ArrayList<>();
+        adapter = new MyAdapter(getContext(), items,"home");
+
+
         Bundle args = getArguments();
         if(args != null) {
             // 取得資料
@@ -51,7 +69,8 @@ public class DetailActivity extends Fragment {
             String exchangeItem = args.getString("exchangeItem");
             String price = args.getString("price");
             String status = args.getString("status");
-            String imageUri = args.getString("image");            String location = args.getString("location");
+            String imageUri = args.getString("image");
+            String location = args.getString("location");
             String UploaderImage = args.getString("userImage");
             String UploaderUserName = args.getString("userName");
 
@@ -66,6 +85,29 @@ public class DetailActivity extends Fragment {
             locationView.setText("地點：" + location);
             userName.setText(UploaderUserName);
         }
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String itemkey = getArguments().getString("itemkey");
+
+                if(itemkey != null && !itemkey.isEmpty()){
+                    new AlertDialog.Builder(getContext()).setTitle("確認刪除").setMessage("確定要刪除嗎？").setPositiveButton("確定", (dialog, which) -> {
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Images").child(uid).child(itemkey);
+
+                        ref.removeValue().addOnSuccessListener(aVoid -> {
+                            Toast.makeText(getContext(), "刪除成功", Toast.LENGTH_SHORT).show();
+                            requireActivity().onBackPressed();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "刪除失敗", Toast.LENGTH_SHORT).show();
+                        });
+                    }).setNegativeButton("取消", null).show();
+                }else {
+                    Toast.makeText(getContext(), "無法取得刪除目標", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         return view;
     }

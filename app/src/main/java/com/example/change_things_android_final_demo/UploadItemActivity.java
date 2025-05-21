@@ -39,25 +39,23 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.Firebase;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -171,14 +169,6 @@ public class UploadItemActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-        if (user != null) {
-            Log.d("FirebaseAuth", "使用者已登入：" + user.getEmail());
-        } else {
-            Log.d("FirebaseAuth", "尚未登入！");
-        }
-
     }
 
     private void  uploadTofireBase(Uri imageUri) {
@@ -193,44 +183,42 @@ public class UploadItemActivity extends AppCompatActivity {
             return;
         }
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null)   return;
+
+        String userName = user.getDisplayName();
+        String userImage = user.getPhotoUrl()!= null ? user.getPhotoUrl().toString() : "";
+
         String fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         StorageReference imageReference = mStorageRef.child("item_picture").child(uid).child("item_images").child(fileName);
 
         imageReference.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    imageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                        DataClass dataClass = new DataClass(
-                                uri.toString(),
-                                itemName,
-                                itemDesc,
-                                itemHopeChange,
-                                itemPrice,
-                                latitude,
-                                longitude,
-                                locationTextView.getText().toString());
+                .addOnSuccessListener(taskSnapshot -> imageReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Map<String, Object> dataMap = new HashMap<>();
+                    dataMap.put("imageURL", uri.toString());
+                    dataMap.put("caption", itemName);
+                    dataMap.put("itemchange", itemHopeChange);
+                    dataMap.put("itemprice", itemPrice);
+                    dataMap.put("latitude", latitude);
+                    dataMap.put("longitude", longitude);
+                    dataMap.put("location", locationTextView.getText().toString());
+                    dataMap.put("userName", userName);
+                    dataMap.put("userImage", userImage);
 
-                        String key = mDatabase.push().getKey();
-                        if (key != null) {
-                            mDatabase.child(key).setValue(dataClass);
-                            Toast.makeText(UploadItemActivity.this, "上傳成功", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(UploadItemActivity.this, Navigation_drawer_view.class));
-                            Intent intent = new Intent(UploadItemActivity.this, Navigation_drawer_view.class);
-                            intent.putExtra("target_fragment","gallery");
-                            startActivity(intent);
-                            finish();
-                }
-            });
-        }).addOnProgressListener(snapshot -> showLoadingDialog())
-                .addOnFailureListener(e -> {
-                    Toast.makeText(UploadItemActivity.this, "上傳失敗", Toast.LENGTH_SHORT).show();
-
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        dismissLoadingDialog();
+                    String key = mDatabase.push().getKey();
+                    if (key != null) {
+                        mDatabase.child(key).setValue(dataMap);
+                        Toast.makeText(UploadItemActivity.this, "上傳成功", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(UploadItemActivity.this, Navigation_drawer_view.class);
+                        intent.putExtra("target_fragment","gallery");
+                        startActivity(intent);
+                        finish();
                     }
-                });
+                }))
+                .addOnProgressListener(snapshot -> showLoadingDialog())
+                .addOnFailureListener(e -> Toast.makeText(UploadItemActivity.this, "上傳失敗", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(taskSnapshot -> dismissLoadingDialog());
     }
 
     private String getFileExtension(Uri fileUri) {
@@ -238,9 +226,8 @@ public class UploadItemActivity extends AppCompatActivity {
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(fileUri));
     }
-    //基本功
-    private void initViews() {
 
+    private void initViews() {
         SelectPhoto = findViewById(R.id.itemImageView);
         itemNameEditText = findViewById(R.id.itemNameEditText);
         itemDescEditText = findViewById(R.id.itemDescEditText);

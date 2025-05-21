@@ -4,31 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".mainnavigation">
 
+    <!-- AppBarLayout：設定藍色背景 + elevation 陰影 -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.Change_things_Android_final_demo.AppBarOverlay">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="#2196F3"
+        android:elevation="4dp">
 
+        <!-- Toolbar：白色字體、藍底 -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.Change_things_Android_final_demo.PopupOverlay" />
-
+            android:background="#2196F3"
+            android:titleTextColor="#FFFFFF"
+            android:elevation="0dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="ChangeThings" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- 內容頁面 -->
     <include layout="@layout/content_mainnavigation" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
