@@ -17,8 +17,8 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageMetadata;
@@ -29,12 +29,11 @@ import java.util.Map;
 
 public class register_view extends AppCompatActivity {
 
-    private EditText mEmail, mPassword;
+    private EditText mEmail, mPassword, mUsrName;
     private Button mRegister, mUploadImage;
     private ImageView mImageView;
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore mFirestore;
     private StorageReference storageRef;
     private Uri profileImageUri;
     private UploadTask uploadTask;
@@ -44,19 +43,16 @@ public class register_view extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_view);
 
-        // 初始化UI元件
         mEmail = findViewById(R.id.editTextEmailAddress2);
         mPassword = findViewById(R.id.editregisterPassword);
         mRegister = findViewById(R.id.register);
         mUploadImage = findViewById(R.id.upload_image);
         mImageView = findViewById(R.id.imageview);
+        mUsrName = findViewById(R.id.editTextName);
 
-        // 初始化Firebase服務
         mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
 
-        // 圖片選擇器
         ActivityResultLauncher<String> imagePicker = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 uri -> {
@@ -67,16 +63,15 @@ public class register_view extends AppCompatActivity {
                 });
 
         mUploadImage.setOnClickListener(v -> imagePicker.launch("image/*"));
-
         mRegister.setOnClickListener(v -> registerUser());
     }
 
     private void registerUser() {
         String email = mEmail.getText().toString().trim();
         String password = mPassword.getText().toString().trim();
+        String usrName = mUsrName.getText().toString().trim();
 
-        // 輸入驗證
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || usrName.isEmpty()) {
             Toast.makeText(this, "請輸入信箱和密碼", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -86,11 +81,9 @@ public class register_view extends AppCompatActivity {
             return;
         }
 
-        // 禁用按鈕防止重複提交
         mRegister.setEnabled(false);
         Toast.makeText(this, "註冊中...", Toast.LENGTH_SHORT).show();
 
-        // 創建用戶帳號
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -110,31 +103,21 @@ public class register_view extends AppCompatActivity {
             return;
         }
 
-        // 結構化儲存路徑：users/{uid}/profile_images/profile_{timestamp}.jpg
         String imagePath = "users/" + user.getUid() +
                 "/profile_images/profile_" + System.currentTimeMillis() + ".jpg";
 
         StorageReference profileRef = storageRef.child(imagePath);
 
-        // 設定檔案中繼資料
         StorageMetadata metadata = new StorageMetadata.Builder()
                 .setContentType("image/jpeg")
                 .setCustomMetadata("uploader", user.getUid())
                 .build();
 
-        // 執行上傳
         uploadTask = profileRef.putFile(profileImageUri, metadata);
-        uploadTask.addOnProgressListener(taskSnapshot -> {
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) /
-                            taskSnapshot.getTotalByteCount();
-                    Log.d("Upload", "進度: " + progress + "%");
-                })
-                .addOnSuccessListener(taskSnapshot -> {
-                    // 獲取下載URL
-                    profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        updateUserProfile(user, uri.toString(), imagePath);
-                    });
-                })
+        uploadTask
+                .addOnSuccessListener(taskSnapshot -> profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    updateUserProfile(user, uri.toString(), imagePath);
+                }))
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "圖片上傳失敗: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
@@ -144,14 +127,14 @@ public class register_view extends AppCompatActivity {
 
     private void updateUserProfile(FirebaseUser user, String imageUrl, String imagePath) {
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(user.getEmail().split("@")[0]) // 使用信箱前綴作為預設名稱
+                .setDisplayName(mUsrName.getText().toString().trim())
                 .setPhotoUri(Uri.parse(imageUrl))
                 .build();
 
         user.updateProfile(profileUpdates)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        saveUserDataToFirestore(user.getUid(), imageUrl, imagePath);
+                        saveUserDataToDatabase(user.getUid(), imageUrl, imagePath);
                     } else {
                         Toast.makeText(this, "更新個人資料失敗", Toast.LENGTH_SHORT).show();
                         mRegister.setEnabled(true);
@@ -159,24 +142,32 @@ public class register_view extends AppCompatActivity {
                 });
     }
 
-    private void saveUserDataToFirestore(String userId, String imageUrl, String imagePath) {
+    private void saveUserDataToDatabase(String userId, String imageUrl, String imagePath) {
+        DatabaseReference realtimeRef = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(userId);
+
         Map<String, Object> userData = new HashMap<>();
         userData.put("email", mAuth.getCurrentUser().getEmail());
         userData.put("profileImageUrl", imageUrl);
+        userData.put("displayName", mUsrName.getText().toString().trim());
         userData.put("profileImagePath", imagePath);
-        userData.put("createdAt", FieldValue.serverTimestamp());
-        userData.put("lastLogin", FieldValue.serverTimestamp());
+        userData.put("createdAt", System.currentTimeMillis());
+        userData.put("lastLogin", System.currentTimeMillis());
+        userData.put("discord", "");
+        userData.put("line", "");
+        userData.put("instagram", "");
 
-        mFirestore.collection("users").document(userId)
-                .set(userData)
+        realtimeRef.setValue(userData)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "註冊成功！", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, login_view.class));
+                    Intent intent = new Intent(this, login_view.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     finish();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "資料儲存失敗: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "資料儲存失敗: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     mRegister.setEnabled(true);
                 });
     }
@@ -184,7 +175,6 @@ public class register_view extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 取消進行中的上傳任務
         if (uploadTask != null && uploadTask.isInProgress()) {
             uploadTask.cancel();
         }

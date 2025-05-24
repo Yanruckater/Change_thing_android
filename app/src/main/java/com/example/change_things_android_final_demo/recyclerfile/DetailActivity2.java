@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.example.change_things_android_final_demo.R;
@@ -47,6 +48,7 @@ public class DetailActivity2 extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_detail2, container, false);
         FloatingActionButton deleteBtn = view.findViewById(R.id.buttondelect);
+        FloatingActionButton editBtn = view.findViewById(R.id.buttonedit);
 
         ImageView imageView = view.findViewById(R.id.detailImage);
         TextView nameView = view.findViewById(R.id.detailName);
@@ -79,10 +81,10 @@ public class DetailActivity2 extends Fragment {
             Glide.with(this).load(UploaderImage).placeholder(R.drawable.baseline_account_circle_24).into(userImage);
             // 顯示
             nameView.setText(name);
-            exchangeView.setText("希望交換物：" + exchangeItem);
-            priceView.setText("價格：" + price);
-            statusView.setText("狀態：" + status);
-            locationView.setText("地點：" + location);
+            exchangeView.setText(exchangeItem);
+            priceView.setText("售價:"+price);
+            statusView.setText("狀態:" + status);
+            locationView.setText("地點:" + location);
             userName.setText(UploaderUserName);
         }
 
@@ -107,6 +109,27 @@ public class DetailActivity2 extends Fragment {
                     Toast.makeText(getContext(), "無法取得刪除目標", Toast.LENGTH_SHORT).show();
                 }
             }
+        });
+
+        editBtn.setOnClickListener(v ->  {
+            Bundle bundle = new Bundle();
+            bundle.putString("name",nameView.getText().toString());
+
+            String exchangeText = exchangeView.getText().toString();
+            String exchangeItem = exchangeText.replaceFirst("希望交換物[:：]\\s*", ""); // 處理中英文冒號與空格
+            bundle.putString("exchangeItem", exchangeItem);
+
+            String priceText = priceView.getText().toString();
+            String price = priceText.replaceAll("[^\\d.]", ""); // 只保留數字
+            bundle.putString("price", price);
+
+            bundle.putString("status",statusView.getText().toString().replace("狀態：",""));
+            bundle.putString("location",locationView.getText().toString().replace("地點：",""));
+            bundle.putString("image",image);
+            bundle.putString("itemkey",getArguments().getString("itemkey"));
+
+            Navigation.findNavController(v).navigate(R.id.nav_edit,bundle);
+            Toast.makeText(getContext(), "進入編輯頁面", Toast.LENGTH_SHORT).show();
         });
 
         return view;

@@ -1,0 +1,140 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_color">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 圖片選擇卡片 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/supplementImageCard"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12dp">
+
+                <ImageView
+                    android:id="@+id/itemImageView2"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/baseline_photo_size_select_actual_24"
+                    android:contentDescription="補充圖片預覽" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="點擊選擇新增圖片"
+                    android:textColor="#757575"
+                    android:textSize="14sp"
+                    android:layout_marginTop="10dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 商品名稱 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="商品名稱"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@android:color/white"
+            app:boxStrokeColor="#BDBDBD"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 希望交換物 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="希望交換物"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@android:color/white"
+            app:boxStrokeColor="#BDBDBD"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editExchangeItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 價格 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="價格"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@android:color/white"
+            app:boxStrokeColor="#BDBDBD"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 狀態文字 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="狀態"
+            android:textSize="16sp"
+            android:textColor="#212121"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Spinner 狀態 -->
+        <Spinner
+            android:id="@+id/editStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown" />
+
+        <!-- 儲存按鈕 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="儲存變更"
+            android:textColor="@android:color/white"
+            app:cornerRadius="24dp"
+            app:backgroundTint="#388E3C"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="24dp"/>
+    </LinearLayout>
+</ScrollView>

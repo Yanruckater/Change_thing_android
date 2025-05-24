@@ -40,4 +40,10 @@
         android:name="com.example.change_things_android_final_demo.recyclerfile.DetailActivity2"
         android:label="上傳商品詳細資訊"
         tools:layout="@layout/activity_detail2"/>
+
+    <fragment
+        android:id="@+id/nav_edit"
+        android:name="com.example.change_things_android_final_demo.recyclerfile.Editltem"
+        android:label="編輯商品"
+        tools:layout="@layout/activity_editltem"/>
 </navigation>

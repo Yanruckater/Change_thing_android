@@ -24,4 +24,8 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="title_activity_mainnavigation">mainnavigation</string>
     <string name="menu_logout">menu_logout</string>
+    <string-array name="status_options">
+        <item>出租中</item>
+        <item>可交易</item>
+    </string-array>
 </resources>

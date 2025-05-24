@@ -10,20 +10,19 @@
     android:padding="20dp"
     tools:context=".register_view">
 
-    <!-- 縮小版LOGO頭像 -->
+    <!-- Logo 頭像 -->
     <ImageView
         android:id="@+id/imageview"
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_marginTop="20dp"
         android:contentDescription="@string/profile_image_desc"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/baseline_account_circle_24" />
 
-    <!-- 上傳圖片按鈕 -->
+    <!-- 選擇大頭貼按鈕 -->
     <Button
         android:id="@+id/upload_image"
         android:layout_width="160dp"
@@ -36,9 +35,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Email 輸入框 -->
+    <!-- Email -->
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/textViewEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -58,11 +57,37 @@
         android:padding="12dp"
         android:background="@drawable/bg_input_field"
         android:inputType="textEmailAddress"
-        app:layout_constraintTop_toBottomOf="@id/textView5"
+        app:layout_constraintTop_toBottomOf="@id/textViewEmail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Password 輸入框 -->
+    <!-- 使用者名稱 -->
+    <TextView
+        android:id="@+id/textViewUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="使用者名稱"
+        android:textColor="#4CAF50"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/editTextEmailAddress2"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:hint="請輸入名稱"
+        android:padding="12dp"
+        android:background="@drawable/bg_input_field"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@id/textViewUsername"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 密碼 -->
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -72,7 +97,7 @@
         android:textColor="#4CAF50"
         android:textStyle="bold"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/editTextEmailAddress2"
+        app:layout_constraintTop_toBottomOf="@id/editTextName"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
@@ -88,7 +113,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Confirm Password 輸入框 -->
+    <!-- 確認密碼 -->
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"

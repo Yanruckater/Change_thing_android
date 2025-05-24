@@ -27,32 +27,44 @@
                 android:background="#E0F2F1"
                 android:contentDescription="商品圖片" />
 
-            <!-- 使用者資訊欄 -->
-            <LinearLayout
+            <!-- 使用者資訊卡片 -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp"
-                android:gravity="center_vertical">
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@android:color/white">
 
-                <ImageView
-                    android:id="@+id/userAvatar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="12dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/baseline_account_circle_24"
-                    android:contentDescription="使用者頭像" />
-
-                <TextView
-                    android:id="@+id/userName"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="使用者名稱"
-                    android:textSize="16sp"
-                    android:textColor="#212121"
-                    android:fontFamily="sans-serif-medium" />
-            </LinearLayout>
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/userAvatar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="12dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/baseline_account_circle_24"
+                        android:contentDescription="使用者頭像" />
+
+                    <TextView
+                        android:id="@+id/userName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="使用者名稱"
+                        android:textSize="16sp"
+                        android:textColor="#212121"
+                        android:fontFamily="sans-serif-medium" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
 
             <!-- 商品名稱 -->
             <TextView
@@ -122,4 +134,14 @@
         app:tint="@color/black"
         app:backgroundTint="@color/white" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonedit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="100dp"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/baseline_mode_edit_24"
+        android:backgroundTint="@android:color/white"
+        android:tint="@color/white" />
 </FrameLayout>
