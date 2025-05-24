@@ -21,17 +21,22 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class setting_view extends Fragment {
 
     private ImageView imageProfile;
-    private EditText editDisplayName;
+    private EditText editDisplayName, dcard, line, instagram;
     private Uri selectedImageUri;
     private FirebaseUser user;
     private StorageReference storageRef;
-    private AlertDialog loadingDialog; // loading
+    private AlertDialog loadingDialog;
 
     @Nullable
     @Override
@@ -41,6 +46,9 @@ public class setting_view extends Fragment {
 
         imageProfile = view.findViewById(R.id.imageProfile);
         editDisplayName = view.findViewById(R.id.editDisplayName);
+        dcard = view.findViewById(R.id.editDiscord);
+        line = view.findViewById(R.id.editLine);
+        instagram = view.findViewById(R.id.editInstagram);
         Button btnChangeImage = view.findViewById(R.id.btnChangeImage);
         Button btnSave = view.findViewById(R.id.btnSave);
 
@@ -50,17 +58,16 @@ public class setting_view extends Fragment {
             return view;
         }
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
         storageRef = FirebaseStorage.getInstance()
                 .getReference("users")
                 .child(user.getUid())
                 .child("profile_images");
 
-        StorageReference fileRef = storageRef.child("profile.jpg");  // 可以固定用 profile.jpg
-
-        if (user != null && user.getPhotoUrl() != null) {
+        if (user.getPhotoUrl() != null) {
             Glide.with(this).load(user.getPhotoUrl()).into(imageProfile);
         }
+
+        loadUserDataFromRealtimeDB();
 
         btnChangeImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
@@ -82,11 +89,47 @@ public class setting_view extends Fragment {
         }
     }
 
+    private void loadUserDataFromRealtimeDB() {
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(user.getUid());
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String displayNameValue = snapshot.child("displayName").getValue(String.class);
+                    String dcardValue = snapshot.child("discord").getValue(String.class);
+                    String lineValue = snapshot.child("line").getValue(String.class);
+                    String instagramValue = snapshot.child("instagram").getValue(String.class);
+
+                    if (displayNameValue != null) editDisplayName.setText(displayNameValue);
+                    if (dcardValue != null) dcard.setText(dcardValue);
+                    if (lineValue != null) line.setText(lineValue);
+                    if (instagramValue != null) instagram.setText(instagramValue);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(requireContext(), "載入資料失敗: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void saveChanges() {
         String displayName = editDisplayName.getText().toString().trim();
+        String dcardValue = dcard.getText().toString().trim();
+        String lineValue = line.getText().toString().trim();
+        String instagramValue = instagram.getText().toString().trim();
+
         if (user == null || !isAdded()) return;
 
         showLoadingDialog();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
+                .getReference("Users")
+                .child(user.getUid());
 
         if (selectedImageUri != null) {
             StorageReference fileRef = storageRef.child("profile.jpg");
@@ -100,38 +143,39 @@ public class setting_view extends Fragment {
 
                         user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                user.reload().addOnCompleteListener(reloadTask -> {
-                                    dismissLoadingDialog();
-                                    if (reloadTask.isSuccessful() && isAdded()) {
-                                        Toast.makeText(requireContext(), "更新成功", Toast.LENGTH_SHORT).show();
-                                        Glide.with(requireContext())
-                                                .load(user.getPhotoUrl())
-                                                .into(imageProfile);
+                                userRef.child("displayName").setValue(displayName);
+                                userRef.child("dcard").setValue(dcardValue);
+                                userRef.child("line").setValue(lineValue);
+                                userRef.child("instagram").setValue(instagramValue);
 
-                                        if(getActivity() instanceof Navigation_drawer_view){
-                                            ((Navigation_drawer_view) getActivity()).updateNavigationHeader();
-                                        }
-                                    }
-                                });
+                                dismissLoadingDialog();
+                                Toast.makeText(requireContext(), "更新成功", Toast.LENGTH_SHORT).show();
+
+                                if (getActivity() instanceof Navigation_drawer_view) {
+                                    ((Navigation_drawer_view) getActivity()).updateNavigationHeader();
+                                }
                             }
                         });
                     }))
                     .addOnFailureListener(e -> {
                         dismissLoadingDialog();
-                        if (isAdded()) {
-                            Toast.makeText(requireContext(), "上傳失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(requireContext(), "上傳失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         } else {
-            // 如果沒有選照片，只更新名字
+            // 只更新資料
             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(displayName)
                     .build();
 
             user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
                 dismissLoadingDialog();
-                if (task.isSuccessful() && isAdded()) {
-                    Toast.makeText(requireContext(), "只更新了名稱", Toast.LENGTH_SHORT).show();
+                if (task.isSuccessful()) {
+                    userRef.child("displayName").setValue(displayName);
+                    userRef.child("dcard").setValue(dcardValue);
+                    userRef.child("line").setValue(lineValue);
+                    userRef.child("instagram").setValue(instagramValue);
+
+                    Toast.makeText(requireContext(), "更新成功（不含照片）", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -155,4 +199,3 @@ public class setting_view extends Fragment {
         }
     }
 }
-

@@ -18,7 +18,7 @@
             android:title="鄰近物品地圖" />
         <item
             android:id="@id/nav_setting"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_build_24"
             android:title="設定" />
         <item
             android:id="@id/nav_chat"

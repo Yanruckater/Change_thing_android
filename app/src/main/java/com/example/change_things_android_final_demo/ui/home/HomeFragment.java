@@ -113,9 +113,9 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                     for (DataSnapshot dataSnapshot : userSnapshot.getChildren()) { // 假設 userSnapshot 是 User 的節點
                         String name = dataSnapshot.child("caption").getValue(String.class);
-                        String price = "售價: " + dataSnapshot.child("itemprice").getValue(String.class);
-                        String exchange = "希望交換物: " + dataSnapshot.child("itemchange").getValue(String.class);
-                        String status = "可交換"; // 暫時寫死
+                        String price = "售價:" + dataSnapshot.child("itemprice").getValue(String.class);
+                        String exchange = "希望交換物:" + dataSnapshot.child("itemchange").getValue(String.class);
+                        String status = dataSnapshot.child("status").getValue(String.class);
                         String image = dataSnapshot.child("imageURL").getValue(String.class);
                         String location = dataSnapshot.child("location").getValue(String.class);
                         String userImage = dataSnapshot.child("userImage").getValue(String.class);

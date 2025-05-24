@@ -23,6 +23,8 @@ public class DetailActivity extends Fragment {
     private String name, exchangeItem, price, status, location;
     private String image;
 
+    private TextView nameView;
+
     public DetailActivity() {
         // Required empty public constructor
     }
@@ -51,7 +53,8 @@ public class DetailActivity extends Fragment {
             String exchangeItem = args.getString("exchangeItem");
             String price = args.getString("price");
             String status = args.getString("status");
-            String imageUri = args.getString("image");            String location = args.getString("location");
+            String imageUri = args.getString("image");
+            String location = args.getString("location");
             String UploaderImage = args.getString("userImage");
             String UploaderUserName = args.getString("userName");
 
@@ -60,13 +63,12 @@ public class DetailActivity extends Fragment {
             Glide.with(this).load(UploaderImage).placeholder(R.drawable.baseline_account_circle_24).into(userImage);
             // 顯示
             nameView.setText(name);
-            exchangeView.setText("希望交換物：" + exchangeItem);
-            priceView.setText("價格：" + price);
+            exchangeView.setText(exchangeItem);
+            priceView.setText(price);
             statusView.setText("狀態：" + status);
             locationView.setText("地點：" + location);
             userName.setText(UploaderUserName);
         }
-
         return view;
     }
 }

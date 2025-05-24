@@ -1,7 +1,5 @@
 package com.example.change_things_android_final_demo;
 
-import android.app.NativeActivity;
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,10 +8,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +18,9 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +35,6 @@ public class recycler_view extends AppCompatActivity {
     FloatingActionButton fab;
     DrawerLayout drawerLayout;
     MaterialToolbar toolbar;
-    NativeActivity nativeActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +73,6 @@ public class recycler_view extends AppCompatActivity {
                         String userImage = dataSnapshot.child("userImage").getValue(String.class);
                         String userName = dataSnapshot.child("userName").getValue(String.class);
                         String itemkey = dataSnapshot.getKey();
-
-
                         items.add(new itme_recycler(name, exchange, price, status, image, location,userName,userImage,itemkey));
                     }
                 }

@@ -86,10 +86,6 @@ public class GalleryFragment extends Fragment {
             items.clear();
             adapter.notifyDataSetChanged();
         }
-
-        // 注意: own_recycler_view.java 中沒有 fab2 的點擊事件。
-        // 如果你的 activity_own_recycler_view.xml 中有 fab2, 你需要決定是否為它添加事件。
-        // 例如: if (binding.fab2 != null) { binding.fab2.setOnClickListener(...); }
     }
 
     private void loadDataFromFirebaseForCurrentUser() {
@@ -103,10 +99,9 @@ public class GalleryFragment extends Fragment {
                 items.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) { // 遍歷該用戶的所有商品
                     String name = dataSnapshot.child("caption").getValue(String.class);
-                    // String desc = dataSnapshot.child("text").getValue(String.class); // 未使用
-                    String price = "售價: " + dataSnapshot.child("itemprice").getValue(String.class);
-                    String exchange = "希望交換物: " + dataSnapshot.child("itemchange").getValue(String.class);
-                    String status = "可交換"; // 暫時寫死
+                    String price = "售價:" + dataSnapshot.child("itemprice").getValue(String.class);
+                    String exchange = "希望交換物:"+dataSnapshot.child("itemchange").getValue(String.class);
+                    String status = dataSnapshot.child("status").getValue(String.class);
                     String image = dataSnapshot.child("imageURL").getValue(String.class);
                     String location = dataSnapshot.child("location").getValue(String.class);
                     String userImage = dataSnapshot.child("userImage").getValue(String.class);
@@ -125,7 +120,7 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (getContext() != null) {
-                    Toast.makeText(getContext(), "個人商品資料讀取失敗: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "已成功登出!" + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         };
